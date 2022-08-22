@@ -1,0 +1,8 @@
+---
+- name: "Apt upgrade ({{ apt_upgrade_mode }})"
+  apt:
+    update_cache: yes
+    upgrade: "{{ apt_upgrade_mode }}"
+    dpkg_options: "{{ apt_upgrade_dpkg_options | default(omit) }}"
+  when:
+    - ansible_os_family == 'Debian'
