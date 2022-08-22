@@ -1,0 +1,10 @@
+---
+- name: Apt update
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install admin tools
+  apt:
+    name: "{{ admin_tools_deb_packages }}"
+    state: present

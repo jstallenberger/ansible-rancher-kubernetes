@@ -1,0 +1,26 @@
+---
+admin_tools_deb_packages:
+  - alien
+  - cifs-utils
+  - curl
+  - dnsutils
+  - ethtool
+  - htop
+  - iftop
+  - iotop
+  - jq
+  - less
+  - lsof
+  - mc
+  - memtester
+  - ncdu
+  - net-tools
+  - nmon
+  - rsync
+  - screen
+  - strace
+  - tcpdump
+  - tree
+  - unzip
+  - vim
+  - wget
