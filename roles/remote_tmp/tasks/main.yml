@@ -1,0 +1,8 @@
+---
+- name: Set remote_tmp permission
+  file:
+    path: "{{ remote_tmp }}"
+    state: directory
+    group: root
+    owner: root
+    mode: 0777

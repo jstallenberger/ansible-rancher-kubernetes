@@ -1,0 +1,4 @@
+---
+- import_playbook: common/apt_upgrade.yml
+- import_playbook: common/admin_tools.yml
+- import_playbook: common/remote_tmp.yml
