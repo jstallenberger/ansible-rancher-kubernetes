@@ -1,0 +1,14 @@
+---
+- name: Run Rancher container
+  docker_container:
+    name: rancher
+    image: rancher/rancher:{{ rancher_version }}
+    state: started
+    privileged: yes
+    detach: yes
+    restart_policy: unless-stopped
+    published_ports:
+      - 80:80
+      - 443:443
+    env:
+      CATTLE_BOOTSTRAP_PASSWORD={{ rancher_bootstrap_password }}
