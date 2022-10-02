@@ -1,5 +1,5 @@
 ---
-rancher_version: latest
+rancher_version: v2.7.0-rc3-linux-arm64
 rancher_bootstrap_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           61653733636137373838303332343265303134306136643537646137616236313330363762633564
