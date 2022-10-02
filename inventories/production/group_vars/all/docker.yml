@@ -1,3 +1,0 @@
----
-docker_gpg_key: /usr/share/keyrings/docker.gpg
-docker_user: jokka

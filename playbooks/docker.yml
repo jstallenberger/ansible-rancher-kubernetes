@@ -1,4 +1,0 @@
----
-- hosts: rancher
-  roles:
-    - docker
