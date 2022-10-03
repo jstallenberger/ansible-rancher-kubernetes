@@ -100,7 +100,7 @@
 
 - name: Create directory .kube
   file:
-    path: ~{{ ansible_user }}/.kube
+    path: "/home/{{ ansible_user }}/.kube"
     state: directory
     owner: "{{ ansible_user }}"
     mode: "u=rwx,g=rx,o="
@@ -108,7 +108,7 @@
 - name: Copy config file to user home directory
   copy:
     src: /etc/rancher/k3s/k3s.yaml
-    dest: ~{{ ansible_user }}/.kube/config
+    dest: "{{ rancher_k3s_kubeconfig }}"
     remote_src: yes
     owner: "{{ ansible_user }}"
     mode: "u=rw,g=,o="
@@ -129,17 +129,17 @@
   command: |
     k3s kubectl config set-cluster default
       --server=https://{{ groups["rancher"][0] }}:6443
-      --kubeconfig ~{{ ansible_user }}/.kube/config
+      --kubeconfig {{ rancher_k3s_kubeconfig }}
   changed_when: true
 
 - name: Changes kubeconfig path
   lineinfile:
-    path: ~{{ ansible_user }}/.bashrc
+    path: /home/{{ ansible_user }}/.bashrc
     regexp: '^export KUBECONFIG='
-    line: export KUBECONFIG="/home/{{ ansible_user }}/.kube/config"
+    line: export KUBECONFIG="{{ rancher_k3s_kubeconfig }}"
 
 - name: Changes kubeconfig path for root
   lineinfile:
     path: /root/.bashrc
     regexp: '^export KUBECONFIG='
-    line: export KUBECONFIG="/home/{{ ansible_user }}/.kube/config"
+    line: export KUBECONFIG="{{ rancher_k3s_kubeconfig }}"
