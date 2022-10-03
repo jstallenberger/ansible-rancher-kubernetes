@@ -137,3 +137,9 @@
     path: ~{{ ansible_user }}/.bashrc
     regexp: '^export KUBECONFIG='
     line: export KUBECONFIG="/home/{{ ansible_user }}/.kube/config"
+
+- name: Changes kubeconfig path for root
+  lineinfile:
+    path: /root/.bashrc
+    regexp: '^export KUBECONFIG='
+    line: export KUBECONFIG="/home/{{ ansible_user }}/.kube/config"

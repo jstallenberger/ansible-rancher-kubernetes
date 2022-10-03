@@ -1,0 +1,4 @@
+---
+helm_gpg_key: /usr/share/keyrings/helm.gpg
+
+rancher_helm_chart: https://releases.rancher.com/server-charts/stable
