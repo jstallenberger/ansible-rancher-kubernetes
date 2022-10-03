@@ -1,0 +1,4 @@
+---
+- hosts: rancher:k8s_control_plane
+  roles:
+    - k9s

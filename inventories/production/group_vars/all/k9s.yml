@@ -1,0 +1,4 @@
+---
+k9s_version: v0.26.6
+k9s_download_base_url: https://github.com/derailed/k9s/releases/download
+k9s_download_dir: "/home/{{ ansible_user }}/k9s"
