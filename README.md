@@ -1,5 +1,9 @@
 # Ansible Rancher and Kubernetes cluster setup
 
+## K8s home lab environment
+
+![image info](./diagrams/k8s-home-lab.svg)
+
 ## Prerequisites
 
 - `Python3` and `ansible` installed on Control Node
