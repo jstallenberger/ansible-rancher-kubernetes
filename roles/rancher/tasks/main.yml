@@ -34,14 +34,73 @@
     name: python3-kubernetes
     state: present
 
-- name: Add Rancher Stable Helm repository
+- name: Add Rancher Helm repository
   kubernetes.core.helm_repository:
     name: rancher-stable
-    repo_url: "{{ rancher_helm_chart }}"
+    repo_url: "{{ rancher_helm_chart_repository }}"
 
 - name: Create k8s namespace cattle-system
   kubernetes.core.k8s:
+    kubeconfig: "{{ rancher_k3s_kubeconfig }}"
     name: cattle-system
     api_version: v1
     kind: Namespace
     state: present
+
+- name: Download Cert Manager CRDs
+  get_url:
+    url: "{{ rancher_cert_manager_crds_url }}"
+    dest: "{{ rancher_cert_manager_crds }}"
+    mode: 0644
+
+- name: Apply Cert Manager CRDs
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rancher_k3s_kubeconfig }}"
+    state: present
+    src: "{{ rancher_cert_manager_crds }}"
+    apply: yes
+
+- name: Add Jetstack repository
+  kubernetes.core.helm_repository:
+    name: jetstack
+    repo_url: "{{ rancher_jetstack_helm_chart_repository }}"
+
+- name: Create k8s namespace cert-manager
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rancher_k3s_kubeconfig }}"
+    name: cert-manager
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Install Cert Manager
+  kubernetes.core.helm:
+    kubeconfig: "{{ rancher_k3s_kubeconfig }}"
+    release_name: cert-manager
+    chart_ref: jetstack/cert-manager
+    release_namespace: cert-manager
+    create_namespace: no
+    chart_version: "{{ rancher_cert_manager_version }}"
+    update_repo_cache: yes
+
+- name: Install Rancher
+  kubernetes.core.helm:
+    kubeconfig: "{{ rancher_k3s_kubeconfig }}"
+    release_name: rancher
+    chart_ref: rancher-stable/rancher
+    release_namespace: cattle-system
+    create_namespace: no
+    chart_version: "{{ rancher_version }}"
+    update_repo_cache: yes
+    values:
+      hostname: "{{ inventory_hostname }}.sslip.io"
+      replicas: 1
+      bootstrapPassword: "{{ rancher_bootstrap_password }}"
+
+- name: Download cleanup script
+  get_url:
+    url: "{{ rancher_cleanup_script_url }}"
+    dest: "{{ rancher_cleanup_script }}"
+    mode: 0700
+    owner: root
+    group: root
