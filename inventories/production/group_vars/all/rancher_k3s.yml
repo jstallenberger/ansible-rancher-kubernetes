@@ -1,0 +1,7 @@
+---
+rancher_k3s_version: v1.25.2+k3s1
+rancher_k3s_url: https://github.com/k3s-io/k3s/releases/download
+
+rancher_k3s_download_dir: /usr/local/bin
+rancher_k3s_systemd_dir: /etc/systemd/system
+rancher_k3s_server_dir: /var/lib/rancher/k3s

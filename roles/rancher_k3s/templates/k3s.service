@@ -1,0 +1,25 @@
+[Unit]
+Description=Lightweight Kubernetes
+Documentation=https://k3s.io
+After=network-online.target
+
+[Service]
+Type=notify
+ExecStartPre=-/sbin/modprobe br_netfilter
+ExecStartPre=-/sbin/modprobe overlay
+ExecStart={{ rancher_k3s_download_dir }}/k3s server --data-dir {{ rancher_k3s_server_dir }}
+#--disable-cloud-controller --kube-apiserver-arg default-not-ready-toleration-seconds=20 --kube-apiserver-arg default-unreachable-toleration-seconds=20
+KillMode=process
+Delegate=yes
+# Having non-zero Limit*s causes performance problems due to accounting overhead
+# in the kernel. We recommend using cgroups to do container-local accounting.
+LimitNOFILE=1048576
+LimitNPROC=infinity
+LimitCORE=infinity
+TasksMax=infinity
+TimeoutStartSec=0
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

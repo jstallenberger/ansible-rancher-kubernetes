@@ -1,4 +1,4 @@
 ---
 - hosts: rancher
   roles:
-    - rancher
+    - rancher_k3s
