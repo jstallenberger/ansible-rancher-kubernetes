@@ -1,0 +1,1 @@
+kubelet-arg: "config=/etc/rancher/k3s/kubelet.config"

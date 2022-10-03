@@ -7,7 +7,8 @@ After=network-online.target
 Type=notify
 ExecStartPre=-/sbin/modprobe br_netfilter
 ExecStartPre=-/sbin/modprobe overlay
-ExecStart={{ rancher_k3s_download_dir }}/k3s server --data-dir {{ rancher_k3s_server_dir }}
+ExecStart={{ rancher_k3s_download_dir }}/k3s server --data-dir {{ rancher_k3s_server_dir }} 
+#--kubelet-arg config={{ rancher_k3s_kubelet_config }}
 #--disable-cloud-controller --kube-apiserver-arg default-not-ready-toleration-seconds=20 --kube-apiserver-arg default-unreachable-toleration-seconds=20
 KillMode=process
 Delegate=yes
