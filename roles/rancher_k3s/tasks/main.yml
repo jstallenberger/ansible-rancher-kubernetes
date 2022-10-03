@@ -38,15 +38,16 @@
     owner: root
     group: root
     mode: 0755
+  register: binary
 
 - name: Copy k3s service file
-  register: k3s_service
   template:
     src: templates/k3s.service
     dest: "{{ rancher_k3s_systemd_dir }}/k3s.service"
     owner: root
     group: root
     mode: 0644
+  register: k3s_service
 
 - name: Create k3s server directory
   file:
@@ -60,6 +61,14 @@
     daemon_reload: yes
     state: started
     enabled: yes
+
+- name: Restart k3s service if binary or service file changed
+  systemd:
+    name: k3s
+    daemon_reload: yes
+    state: restarted
+    enabled: yes
+  when: binary.changed or k3s_service.changed
 
 - name: Wait for node-token
   wait_for:
