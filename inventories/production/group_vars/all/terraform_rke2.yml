@@ -1,4 +1,9 @@
 ---
+tf_rke2_version: v1.24.2+rke2r1
+tf_rke2_cluster_name: playground
+
+tf_rancher_provider_version: 1.24.1
+
 tf_rancher_api: "https://{{ groups['rancher'][0] }}.sslip.io/v3"
 
 tf_rancher_access_key: !vault |

@@ -51,3 +51,11 @@
     group: root
     mode: 0755
   when: ansible_architecture == "aarch64"
+
+- name: Create folder for Terraform files
+  file:
+    path: "{{ terraform_files_dir }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755

@@ -1,0 +1,32 @@
+---
+- name: Copy main.tf file
+  template:
+    src: templates/main.tf
+    dest: "{{ terraform_files_dir }}/main.tf"
+    owner: root
+    group: root
+    mode: 0644
+  register: main
+
+- name: Copy variables.tf file
+  template:
+    src: templates/variables.tf
+    dest: "{{ terraform_files_dir }}/variables.tf"
+    owner: root
+    group: root
+    mode: 0644
+  register: variables
+
+- name: Copy terraform.tfvars file
+  template:
+    src: templates/terraform.tfvars
+    dest: "{{ terraform_files_dir }}/terraform.tfvars"
+    owner: root
+    group: root
+    mode: 0600
+  register: tfvars
+
+# - name: Register initial RKE2 cluster into Rancher
+#   terraform:
+#     project_path: "{{ terraform_files_dir }}"
+#     state: present
