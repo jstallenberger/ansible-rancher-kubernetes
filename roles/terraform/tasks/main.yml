@@ -1,0 +1,53 @@
+---
+- name: Ensure prerequisites are installed
+  apt:
+    update_cache: yes
+    name:
+      - curl
+      - gnupg
+      - software-properties-common
+    state: present
+
+- name: Get architecture
+  shell:
+    dpkg --print-architecture
+  register: architecture
+
+- name: Check if HashiCorp GPG key exists on host
+  stat:
+    path: "{{ hashicorp_gpg_key }}"
+  register: key
+
+- name: Add HashiCorp GPG key
+  shell:
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o {{ hashicorp_gpg_key }}
+  when: key.stat.exists == False
+
+- name: Add HashiCorp APT repository
+  copy:
+    content: |
+      deb [arch={{ architecture.stdout }} signed-by={{ hashicorp_gpg_key }}] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
+    dest: /etc/apt/sources.list.d/hashicorp.list
+    mode: 0644
+    owner: root
+    group: root
+
+# Installing Terraform from the official repository currently not possible for arm64 architecture
+# https://github.com/hashicorp/terraform/issues/27378
+# Leaving this part commented for future reference, installing it manually in next task
+
+# - name: Install Terraform
+#   apt:
+#     update_cache: yes
+#     name: terraform
+#     state: present
+
+- name: Install Terraform
+  unarchive:
+    src: "{{ terraform_binary_download_url }}"
+    remote_src: yes
+    dest: "{{ terraform_binary_dir }}"
+    owner: root
+    group: root
+    mode: 0755
+  when: ansible_architecture == "aarch64"
