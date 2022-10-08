@@ -13,6 +13,7 @@
   - `ansible-galaxy collection install community.kubernetes`
   - `ansible-galaxy collection install cloud.common`
 - `terraform` installed on Control Node
+- Once Rancher is installed, create an initial API key on the UI
 - _Optional_: VSCode with Ansible and Terraform plugins
 
 ## Example usage
