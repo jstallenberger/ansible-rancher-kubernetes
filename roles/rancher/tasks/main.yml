@@ -47,41 +47,41 @@
     kind: Namespace
     state: present
 
-- name: Download Cert Manager CRDs
-  get_url:
-    url: "{{ rancher_cert_manager_crds_url }}"
-    dest: "{{ rancher_cert_manager_crds }}"
-    mode: 0644
+# - name: Download Cert Manager CRDs
+#   get_url:
+#     url: "{{ rancher_cert_manager_crds_url }}"
+#     dest: "{{ rancher_cert_manager_crds }}"
+#     mode: 0644
 
-- name: Apply Cert Manager CRDs
-  kubernetes.core.k8s:
-    kubeconfig: "{{ rancher_k3s_kubeconfig }}"
-    state: present
-    src: "{{ rancher_cert_manager_crds }}"
-    apply: yes
+# - name: Apply Cert Manager CRDs
+#   kubernetes.core.k8s:
+#     kubeconfig: "{{ rancher_k3s_kubeconfig }}"
+#     state: present
+#     src: "{{ rancher_cert_manager_crds }}"
+#     apply: yes
 
-- name: Add Jetstack repository
-  kubernetes.core.helm_repository:
-    name: jetstack
-    repo_url: "{{ rancher_jetstack_helm_chart_repository }}"
+# - name: Add Jetstack repository
+#   kubernetes.core.helm_repository:
+#     name: jetstack
+#     repo_url: "{{ rancher_jetstack_helm_chart_repository }}"
 
-- name: Create k8s namespace cert-manager
-  kubernetes.core.k8s:
-    kubeconfig: "{{ rancher_k3s_kubeconfig }}"
-    name: cert-manager
-    api_version: v1
-    kind: Namespace
-    state: present
+# - name: Create k8s namespace cert-manager
+#   kubernetes.core.k8s:
+#     kubeconfig: "{{ rancher_k3s_kubeconfig }}"
+#     name: cert-manager
+#     api_version: v1
+#     kind: Namespace
+#     state: present
 
-- name: Install Cert Manager
-  kubernetes.core.helm:
-    kubeconfig: "{{ rancher_k3s_kubeconfig }}"
-    release_name: cert-manager
-    chart_ref: jetstack/cert-manager
-    release_namespace: cert-manager
-    create_namespace: no
-    chart_version: "{{ rancher_cert_manager_version }}"
-    update_repo_cache: yes
+# - name: Install Cert Manager
+#   kubernetes.core.helm:
+#     kubeconfig: "{{ rancher_k3s_kubeconfig }}"
+#     release_name: cert-manager
+#     chart_ref: jetstack/cert-manager
+#     release_namespace: cert-manager
+#     create_namespace: no
+#     chart_version: "{{ rancher_cert_manager_version }}"
+#     update_repo_cache: yes
 
 - name: Install Rancher
   kubernetes.core.helm:

@@ -1,0 +1,72 @@
+---
+- name: Create Rancher cert directory
+  file:
+    path: "{{ rancher_cert_dir }}"
+    state: directory
+    mode: 0700
+    owner: root
+    group: root
+
+- name: Copy cacert.pem, tls.conf and keys to host
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: 0600
+    owner: root
+    group: root
+  with_items:
+    - { src: "templates/cacert.conf", dest: "{{ rancher_cert_dir }}/cacert.conf" }
+    - { src: "templates/cacert.pem", dest: "{{ rancher_cert_dir }}/cacert.pem" }
+    - { src: "templates/cacert.key", dest: "{{ rancher_cert_dir }}/cacert.key" }
+    - { src: "templates/tls.conf", dest: "{{ rancher_cert_dir }}/tls.conf" }
+    - { src: "templates/tls.key", dest: "{{ rancher_cert_dir }}/tls.key" }
+
+- name: Check if tls cert exists
+  stat:
+    path: "{{ rancher_cert_dir }}/tls.crt"
+  register: tls_cert
+
+- name: Deploy tls cert
+  shell: |
+    cd {{ rancher_cert_dir }}
+    openssl req \
+    -new \
+    -config tls.conf \
+    -key tls.key \
+    -out tls.csr
+    openssl x509 \
+    -req \
+    -in tls.csr \
+    -CA cacert.pem \
+    -CAkey cacert.key \
+    -CAcreateserial \
+    -extfile tls.conf \
+    -days 36500 \
+    -out tls.crt
+  when: tls_cert.stat.exists == False
+  register: tls_cert_deployed
+
+- name: Set owner and permission on tls cert
+  file:
+    path: "{{ item }}"
+    state: file
+    mode: 0600
+    owner: root
+    group: root
+  with_items:
+    - "{{ rancher_cert_dir }}/tls.crt"
+    - "{{ rancher_cert_dir }}/tls.csr"
+
+- name: Add cacert.pem to /usr/local/share/ca-certificates as ca.crt
+  template:
+    src: templates/cacert.pem
+    dest: /usr/local/share/ca-certificates/ca.crt
+    mode: 0600
+    owner: root
+    group: root
+  register: cacert_added
+
+- name: Add cacert.pem to local trust store
+  shell: |
+    update-ca-certificates
+  when: cacert_added.changed

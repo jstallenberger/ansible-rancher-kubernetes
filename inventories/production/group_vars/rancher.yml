@@ -1,0 +1,95 @@
+---
+### K3S configuration ###
+
+rancher_k3s_version: v1.24.2+k3s1
+rancher_k3s_url: https://github.com/k3s-io/k3s/releases/download
+
+rancher_k3s_download_dir: /usr/local/bin
+rancher_k3s_systemd_dir: /etc/systemd/system
+rancher_k3s_server_dir: /var/lib/rancher/k3s
+
+rancher_k3s_kubeconfig: "/home/{{ ansible_user }}/.kube/config"
+
+rancher_k3s_config: /etc/rancher/k3s/config.yaml
+
+rancher_k3s_kubelet_config: /etc/rancher/k3s/kubelet.config
+rancher_k3s_shutdown_grace_period: 30s
+rancher_k3s_shutdown_grace_period_critical_pods: 10s
+
+
+### Rancher configuration ###
+
+helm_gpg_key: /usr/share/keyrings/helm.gpg
+
+rancher_version: v2.6.8
+
+rancher_helm_chart_repository: https://releases.rancher.com/server-charts/stable
+
+# rancher_cert_manager_version: v1.7.1
+# rancher_cert_manager_crds_url: "https://github.com/cert-manager/cert-manager/releases/download/{{ rancher_cert_manager_version }}/cert-manager.crds.yaml"
+# rancher_cert_manager_crds: "/home/{{ ansible_user }}/cert-manager.crds.yaml"
+
+# rancher_jetstack_helm_chart_repository: https://charts.jetstack.io
+
+rancher_cert_dir: "/home/{{ ansible_user }}/rancher_certs"
+
+rancher_bootstrap_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          30386531316239636639623932666430363532366533363039306266646562323139633563633137
+          3535613438316531343637343264643663303663316438380a303531626364643234643236666363
+          30633065333361646637386539663763633363376333616330303039386261636233663536336662
+          3839393831656261640a376336623333363663656437363837643562623335353535316362306231
+          6638
+
+rancher_cleanup_script_url: https://raw.githubusercontent.com/rancher/rancher-cleanup/main/cleanup.sh
+rancher_cleanup_script: "/home/{{ ansible_user }}/cleanup.sh"
+
+
+### Terraform install configuration ###
+
+hashicorp_gpg_key: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+
+terraform_version: 1.3.2
+terraform_binary_download_url: "https://releases.hashicorp.com/terraform/{{ terraform_version }}/terraform_{{ terraform_version }}_linux_arm64.zip"
+terraform_binary_dir: /usr/local/bin
+
+terraform_files_dir: "/home/{{ ansible_user }}/terraform"
+
+
+### Terraform RKE2 cluster configuration ###
+
+tf_rke2_version: v1.24.2+rke2r1
+tf_rke2_cluster_name: playground
+
+tf_rancher_provider_version: 1.24.1
+
+tf_rancher_api: "https://{{ groups['rancher'][0] }}.sslip.io/v3"
+
+tf_rancher_access_key: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          30343739306361663630666334663062326534643337323939353435366338346334333838366466
+          3161303035393930343561366234653531646137616437300a343532333365636233663933666337
+          66646463636438616261326639323436653161336138626662396635356130636330363261343939
+          3630383438663330630a626636363234653437653766656334663034313735326532613763323337
+          6164
+
+tf_rancher_secret_key: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          32393036633736306237643639313230653562663762633566613465653264373762633966653231
+          3262343433376439653531646538613264653137303730320a383264303234363739623632663362
+          33396166636138633033376631666136646633616230383361633261643038623030623135653238
+          3730396133393566660a616261336331353731386430623135333634333561366438396363353339
+          63663335306262356665623566653566623866633234373861383165643330316634366365363239
+          61666565653766636534356365323132616435633537653162623763316330386539396562663166
+          616565626263333931313065306161386433
+
+tf_rancher_bearer_token: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          61343566336463313431663839613366396337313261343061346163313331653835643135616633
+          3862343231333833643933633463306635363038636565310a383562336430393638366239313430
+          36323263616162373135376137366538393833316234346538323631326465303737313661373237
+          6139383137383138630a616537316232343732363561353164316334626233666339626363316366
+          31616265386531323233366233613164653435333361633561356237626132356530613535666230
+          35336331333534323336616331616164396335333163386532616166616662353131653365333166
+          36333766396530326234393739316531666538613534353437393031626165336131623331663835
+          66623430323039313335
