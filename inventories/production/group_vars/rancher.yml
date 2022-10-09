@@ -25,11 +25,11 @@ rancher_version: v2.6.8
 
 rancher_helm_chart_repository: https://releases.rancher.com/server-charts/stable
 
+# Cert Manager not needed when using own certificates
+# rancher_jetstack_helm_chart_repository: https://charts.jetstack.io
 # rancher_cert_manager_version: v1.7.1
 # rancher_cert_manager_crds_url: "https://github.com/cert-manager/cert-manager/releases/download/{{ rancher_cert_manager_version }}/cert-manager.crds.yaml"
 # rancher_cert_manager_crds: "/home/{{ ansible_user }}/cert-manager.crds.yaml"
-
-# rancher_jetstack_helm_chart_repository: https://charts.jetstack.io
 
 rancher_cert_dir: "/home/{{ ansible_user }}/rancher_certs"
 

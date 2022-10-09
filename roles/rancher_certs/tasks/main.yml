@@ -7,7 +7,7 @@
     owner: root
     group: root
 
-- name: Copy cacert.pem, tls.conf and keys to host
+- name: Copy cacerts.pem, tls.conf and keys to host
   template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -16,7 +16,7 @@
     group: root
   with_items:
     - { src: "templates/cacert.conf", dest: "{{ rancher_cert_dir }}/cacert.conf" }
-    - { src: "templates/cacert.pem", dest: "{{ rancher_cert_dir }}/cacert.pem" }
+    - { src: "templates/cacerts.pem", dest: "{{ rancher_cert_dir }}/cacerts.pem" }
     - { src: "templates/cacert.key", dest: "{{ rancher_cert_dir }}/cacert.key" }
     - { src: "templates/tls.conf", dest: "{{ rancher_cert_dir }}/tls.conf" }
     - { src: "templates/tls.key", dest: "{{ rancher_cert_dir }}/tls.key" }
@@ -37,7 +37,7 @@
     openssl x509 \
     -req \
     -in tls.csr \
-    -CA cacert.pem \
+    -CA cacerts.pem \
     -CAkey cacert.key \
     -CAcreateserial \
     -extfile tls.conf \
@@ -57,16 +57,16 @@
     - "{{ rancher_cert_dir }}/tls.crt"
     - "{{ rancher_cert_dir }}/tls.csr"
 
-- name: Add cacert.pem to /usr/local/share/ca-certificates as ca.crt
+- name: Add cacerts.pem to /usr/local/share/ca-certificates as ca.crt
   template:
-    src: templates/cacert.pem
+    src: templates/cacerts.pem
     dest: /usr/local/share/ca-certificates/ca.crt
     mode: 0600
     owner: root
     group: root
   register: cacert_added
 
-- name: Add cacert.pem to local trust store
+- name: Add cacerts.pem to local trust store
   shell: |
     update-ca-certificates
   when: cacert_added.changed

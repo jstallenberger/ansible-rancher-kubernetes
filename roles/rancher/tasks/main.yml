@@ -47,6 +47,8 @@
     kind: Namespace
     state: present
 
+# Cert Manager not needed when using own certificates
+
 # - name: Download Cert Manager CRDs
 #   get_url:
 #     url: "{{ rancher_cert_manager_crds_url }}"
@@ -83,6 +85,57 @@
 #     chart_version: "{{ rancher_cert_manager_version }}"
 #     update_repo_cache: yes
 
+- name: Read tls.crt file
+  slurp:
+    src: "{{ rancher_cert_dir }}/tls.crt"
+  register: tls_crt
+
+- name: Read tls.key file
+  slurp:
+    src: "{{ rancher_cert_dir }}/tls.key"
+  register: tls_key
+
+- name: Read cacerts.pem content
+  slurp:
+    src: "{{ rancher_cert_dir }}/cacerts.pem"
+  register: cacerts_pem
+
+# - name: Debug
+#   debug:
+#     msg: "{{ cacerts_pem['content'] | b64decode | regex_replace('(?m)^-----(.)*') | trim }}"
+
+- name: Create secret tls-rancher-ingress
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rancher_k3s_kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: tls-rancher-ingress
+        namespace: cattle-system
+      type: kubernetes.io/tls
+      data:
+        tls.crt: |
+          {{ tls_crt['content'] }}
+        tls.key: |
+          {{ tls_key['content'] }}
+
+- name: Create secret tls-ca
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rancher_k3s_kubeconfig }}"
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: tls-ca
+        namespace: cattle-system
+      type: Opaque
+      data:
+        cacerts.pem: |
+          {{ cacerts_pem['content'] }}
+
 - name: Install Rancher
   kubernetes.core.helm:
     kubeconfig: "{{ rancher_k3s_kubeconfig }}"
@@ -96,6 +149,8 @@
       hostname: "{{ inventory_hostname }}.sslip.io"
       replicas: 1
       bootstrapPassword: "{{ rancher_bootstrap_password }}"
+      ingress.tls.source: secret
+      privateCA: true
 
 - name: Download cleanup script
   get_url:

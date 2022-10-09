@@ -9,10 +9,10 @@ openssl req \
 -x509 \
 -config cacert.conf \
 -key cacert.key \
--out cacert.pem
+-out cacerts.pem
 
 # Check cert content
-openssl x509 -in cacert.pem -text
+openssl x509 -in cacerts.pem -text
 
 ###
 
@@ -37,12 +37,12 @@ openssl req -in tls.csr -text
 openssl x509 \
 -req \
 -in tls.csr \
--CA cacert.pem \
+-CA cacerts.pem \
 -CAkey cacert.key \
 -CAcreateserial \
 -extfile tls.conf \
 -days 36500 \
-out tls.crt
+- out tls.crt
 
 # Check cert contents
 openssl x509 -in tls.crt -text
