@@ -41,8 +41,9 @@ openssl x509 \
 -CAkey cacert.key \
 -CAcreateserial \
 -extfile tls.conf \
+-extensions v3_req \
 -days 36500 \
-- out tls.crt
+-out tls.crt
 
 # Check cert contents
 openssl x509 -in tls.crt -text

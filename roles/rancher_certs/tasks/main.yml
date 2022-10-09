@@ -41,6 +41,7 @@
     -CAkey cacert.key \
     -CAcreateserial \
     -extfile tls.conf \
+    -extensions v3_req \
     -days 36500 \
     -out tls.crt
   when: tls_cert.stat.exists == False
