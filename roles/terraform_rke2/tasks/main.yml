@@ -26,7 +26,24 @@
     mode: 0600
   register: tfvars
 
-# - name: Register initial RKE2 cluster into Rancher
-#   terraform:
-#     project_path: "{{ terraform_files_dir }}"
-#     state: present
+- name: Create k8s namespace fleet-ns
+  kubernetes.core.k8s:
+    kubeconfig: "{{ rancher_k3s_kubeconfig }}"
+    name: fleet-ns
+    api_version: v1
+    kind: Namespace
+    state: present
+
+- name: Register initial RKE2 cluster into Rancher
+  terraform:
+    project_path: "{{ terraform_files_dir }}"
+    state: present
+    force_init: yes
+  register: tf_output
+
+- name: Print tf_output
+  debug:
+    msg: "{{ tf_output.outputs.cluster_registration_token.value[0].node_command }}"
+
+#     msg: "{{ cacerts_pem['content'] | b64decode | regex_replace('(?m)^-----(.)*') | trim }}"
+

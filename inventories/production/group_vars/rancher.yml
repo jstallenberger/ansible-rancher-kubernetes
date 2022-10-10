@@ -60,6 +60,7 @@ terraform_files_dir: "/home/{{ ansible_user }}/terraform"
 
 tf_rke2_version: v1.24.2+rke2r1
 tf_rke2_cluster_name: playground
+tf_rke2_fleet_namespace: playground-ns
 
 tf_rancher_provider_version: 1.24.1
 
