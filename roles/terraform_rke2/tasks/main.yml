@@ -7,6 +7,7 @@
     group: root
     mode: 0644
   register: main
+  when: inventory_hostname in groups["rancher"]
 
 - name: Copy variables.tf file
   template:
@@ -16,6 +17,7 @@
     group: root
     mode: 0644
   register: variables
+  when: inventory_hostname in groups["rancher"]
 
 - name: Copy terraform.tfvars file
   template:
@@ -25,6 +27,7 @@
     group: root
     mode: 0600
   register: tfvars
+  when: inventory_hostname in groups["rancher"]
 
 - name: Create k8s namespace fleet-ns
   kubernetes.core.k8s:
@@ -33,6 +36,7 @@
     api_version: v1
     kind: Namespace
     state: present
+  when: inventory_hostname in groups["rancher"]
 
 - name: Register initial RKE2 cluster into Rancher
   terraform:
@@ -40,10 +44,26 @@
     state: present
     force_init: yes
   register: tf_output
+  when: inventory_hostname in groups["rancher"]
 
 - name: Print tf_output
   debug:
-    msg: "{{ tf_output.outputs.cluster_registration_token.value[0].node_command }}"
+    msg: "{{ tf_output.outputs.cluster_registration_token.value[0].node_command[1:] }}"
+  when: inventory_hostname in groups["rancher"]
 
-#     msg: "{{ cacerts_pem['content'] | b64decode | regex_replace('(?m)^-----(.)*') | trim }}"
+- name: Set node command fact for k8s nodes
+  set_fact: node_command="{{ tf_output.outputs.cluster_registration_token.value[0].node_command[1:] }}"
+  delegate_to: "{{ item }}"
+  delegate_facts: True
+  with_items: "{{ groups['k8s'] }}"
+  when: inventory_hostname in groups["rancher"]
 
+- name: Run node command for master nodes
+  shell: |
+    {{ node_command }} --etcd --controlplane
+  when: inventory_hostname in groups["k8s_master"]
+
+- name: Run node command for worker nodes
+  shell: |
+    {{ node_command }} --worker
+  when: inventory_hostname in groups["k8s_worker"]

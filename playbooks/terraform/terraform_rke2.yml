@@ -1,4 +1,4 @@
 ---
-- hosts: rancher
+- hosts: all
   roles:
     - terraform_rke2
